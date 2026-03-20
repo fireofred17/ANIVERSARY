@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --romance-red: #800020; /* Deep Burgundy */
             --rose: #ff4d6d;
             --gold: #ffb703;
             --glass: rgba(255, 255, 255, 0.15);
@@ -17,11 +16,11 @@
             margin: 0; padding: 0; height: 100%;
             background: radial-gradient(circle at center, #4a0010 0%, #1a0004 100%);
             color: white; font-family: 'Montserrat', sans-serif;
-            overflow: hidden;
+            overflow: hidden; transition: background 1.5s ease;
         }
 
         canvas { position: fixed; top: 0; left: 0; z-index: -1; pointer-events: none; }
-        #game-canvas { position: relative; z-index: 5; pointer-events: auto; background: rgba(0,0,0,0.3); border: 2px solid var(--rose); border-radius: 20px; }
+        #game-canvas { position: relative; z-index: 5; pointer-events: auto; background: rgba(0,0,0,0.4); border: 2px solid var(--rose); border-radius: 20px; touch-action: none; }
 
         /* Navigation UI */
         .progress-bar {
@@ -54,22 +53,18 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
-        h1 { font-family: 'Dancing Script', cursive; font-size: 3.5rem; margin-bottom: 10px; color: #ffb7c5; text-shadow: 0 0 15px rgba(255,77,109,0.5); }
+        h1 { font-family: 'Dancing Script', cursive; font-size: 3.2rem; margin-bottom: 10px; color: #ffb7c5; text-shadow: 0 0 15px rgba(255,77,109,0.5); }
         
-        /* Scratch Card */
-        #scratch-pad { cursor: crosshair; border-radius: 15px; touch-action: none; }
+        #scratch-pad { cursor: crosshair; border-radius: 15px; touch-action: none; background: #222; }
 
-        /* Infinity Loop */
         #infinity-box {
             height: 300px; overflow-y: auto; width: 100%;
             background: rgba(0,0,0,0.4); border-radius: 20px;
-            padding: 20px; box-sizing: border-box;
-            border: 1px solid var(--rose);
+            padding: 20px; box-sizing: border-box; border: 1px solid var(--rose);
         }
 
-        /* Animations */
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
-        .floating { animation: float 3s infinite ease-in-out; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .floating { animation: pulse 3s infinite ease-in-out; }
     </style>
 </head>
 <body>
@@ -82,8 +77,8 @@
         <h1>Welcome Home</h1>
         <div class="glass-card">
             <p>Our love is a secret garden. Tap the heart to enter.</p>
-            <div id="lock-heart" onclick="unlockSite()" style="font-size: 6rem; cursor: pointer; filter: drop-shadow(0 0 20px var(--rose));">❤️</div>
-            <p style="margin-top: 20px; font-size: 0.8rem; opacity: 0.7;">(A gift for my 10/10 girl)</p>
+            <div id="lock-heart" onclick="unlockSite()" style="font-size: 6rem; cursor: pointer; filter: drop-shadow(0 0 20px var(--rose)); transition: 0.5s;">❤️</div>
+            <p style="margin-top: 20px; font-size: 0.8rem; opacity: 0.7;">(Created for my 10/10 girl)</p>
         </div>
     </div>
 
@@ -93,19 +88,19 @@
             <p>Between the coaching classes and the mock tests...</p>
             <h2 style="color: var(--gold);">99.95 Percentile Goal</h2>
             <p>But you are the only result I ever wanted to achieve.</p>
-            <p>Distance is just a test to see how far love can travel.</p>
+            <p>Distance is just a test of our strength.</p>
         </div>
     </div>
 
     <div class="chapter" id="c3">
         <h1>Reveal the Magic</h1>
-        <p>Scratch the surface to see our most special date.</p>
+        <p>Scratch the surface to see our special date.</p>
         <canvas id="scratch-pad" width="300" height="300"></canvas>
     </div>
 
     <div class="chapter" id="c4">
         <h1>Catch My Love</h1>
-        <p>Move the heart to catch the falling stars! <br>Score: <span id="score-val">0</span></p>
+        <p>Slide the heart to catch the stars! <br>Score: <span id="score-val">0</span></p>
         <canvas id="game-canvas" width="320" height="400"></canvas>
     </div>
 
@@ -122,7 +117,7 @@
         <div class="glass-card">
             <p>We've shared exactly:</p>
             <h1 id="clock" style="font-size: 2.2rem; color: var(--gold);">000000</h1>
-            <p>Seconds of pure happiness since we started.</p>
+            <p>Seconds of pure happiness.</p>
         </div>
     </div>
 
@@ -131,7 +126,7 @@
         <div class="glass-card">
             <span style="font-size: 4rem;">🍫</span>
             <h3>Chocolate Day Memory</h3>
-            <p>I realized that day... no sugar in the world is as sweet as your voice on a late-night call.</p>
+            <p>No sugar in the world is as sweet as your voice on a late-night call.</p>
         </div>
     </div>
 
@@ -148,10 +143,10 @@
         <h1>March 26, 2026</h1>
         <div class="floating" style="font-size: 5rem;">💍</div>
         <h1>Our 1st Year</h1>
-        <p>The best year of my life. 365 days of you.</p>
+        <p>The best 365 days of my life.</p>
     </div>
 
-    <div class="chapter" id="c13">
+    <div class="chapter" id="c10">
         <h1>Infinity & Beyond</h1>
         <div id="infinity-box">
             <div id="infinity-content"></div>
@@ -161,9 +156,9 @@
 
     <script>
         let step = 1;
-        const totalSteps = 10; // Simplified for 10/10 impact
+        const totalSteps = 10;
 
-        // Generate Dots
+        // Dots
         const dotContainer = document.getElementById('dots');
         for(let i=1; i<=totalSteps; i++) {
             const d = document.createElement('div');
@@ -173,19 +168,23 @@
         }
 
         function unlockSite() {
-            document.getElementById('lock-heart').innerHTML = "💖";
+            const heart = document.getElementById('lock-heart');
+            heart.innerHTML = "💖";
+            heart.style.transform = "scale(1.2)";
             document.getElementById('nextBtn').style.display = "block";
-            nextChapter();
         }
 
         function nextChapter() {
             if(step < totalSteps) {
-                document.getElementById(`c${step === 10 ? 13 : step}`).classList.remove('active');
+                document.getElementById(`c${step}`).classList.remove('active');
                 document.getElementById(`dot-${step}`).classList.remove('active');
                 step++;
-                const nextId = step === 10 ? 13 : step;
-                document.getElementById(`c${nextId}`).classList.add('active');
+                document.getElementById(`c${step}`).classList.add('active');
                 document.getElementById(`dot-${step}`).classList.add('active');
+
+                // Rainbow Background Logic
+                const tints = ['#4a0010', '#1a002e', '#001a1a', '#2d2d00', '#4a0010'];
+                document.body.style.background = `radial-gradient(circle, ${tints[step % tints.length]} 0%, #000 100%)`;
 
                 if(step === 3) initScratch();
                 if(step === 4) initGame();
@@ -194,65 +193,53 @@
             }
         }
 
-        // --- PETAL SYSTEM ---
+        // --- PETALS ---
         const pCanvas = document.getElementById('petal-canvas');
         const pCtx = pCanvas.getContext('2d');
         pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight;
         let petals = [];
-        function createPetal() {
-            return { x: Math.random()*pCanvas.width, y: -20, s: Math.random()*2+1, r: Math.random()*360 };
-        }
         function drawPetals() {
             pCtx.clearRect(0,0,pCanvas.width,pCanvas.height);
-            pCtx.fillStyle = "rgba(255, 182, 193, 0.6)";
-            if(petals.length < 50) petals.push(createPetal());
+            pCtx.fillStyle = "rgba(255, 182, 193, 0.4)";
+            if(petals.length < 40) petals.push({ x: Math.random()*pCanvas.width, y: -20, s: Math.random()*2+1, r: Math.random()*360 });
             petals.forEach((p, i) => {
-                p.y += p.s; p.x += Math.sin(p.y/20);
-                pCtx.beginPath();
-                pCtx.ellipse(p.x, p.y, 5, 8, p.r, 0, Math.PI*2);
-                pCtx.fill();
+                p.y += p.s; p.x += Math.sin(p.y/30);
+                pCtx.beginPath(); pCtx.ellipse(p.x, p.y, 4, 7, p.r, 0, Math.PI*2); pCtx.fill();
                 if(p.y > pCanvas.height) petals.splice(i, 1);
             });
             requestAnimationFrame(drawPetals);
         }
         drawPetals();
 
-        // --- GAME (HEART CATCHER) ---
+        // --- GAME (FIXED TOUCH) ---
         function initGame() {
             const canvas = document.getElementById('game-canvas');
             const ctx = canvas.getContext('2d');
-            let score = 0; let items = [];
-            let heartX = 160;
+            let score = 0; let items = []; let heartX = 160;
 
-            const updatePos = (e) => {
+            const move = (e) => {
                 const rect = canvas.getBoundingClientRect();
-                const clientX = e.clientX || (e.touches ? e.touches[0].clientX : 160);
-                heartX = clientX - rect.left;
+                const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+                heartX = Math.max(20, Math.min(300, x));
             };
-            canvas.addEventListener('mousemove', updatePos);
-            canvas.addEventListener('touchmove', updatePos);
+            canvas.addEventListener('mousemove', move);
+            canvas.addEventListener('touchmove', (e) => { e.preventDefault(); move(e); }, {passive: false});
 
             const loop = setInterval(() => {
                 if(step !== 4) { clearInterval(loop); return; }
                 ctx.clearRect(0,0,320,400);
-                
-                if(Math.random() < 0.05) items.push({x: Math.random()*300, y: 0});
-                
+                if(Math.random() < 0.08) items.push({x: Math.random()*300, y: 0});
                 items.forEach((item, i) => {
-                    item.y += 4;
-                    ctx.font = "20px Arial";
+                    item.y += 5;
                     ctx.fillText("⭐", item.x, item.y);
-
-                    // Collision
-                    if(item.y > 350 && Math.abs(item.x - heartX) < 30) {
+                    if(item.y > 350 && Math.abs(item.x - heartX) < 35) {
                         score++; items.splice(i,1);
                         document.getElementById('score-val').innerText = score;
+                        if(navigator.vibrate) navigator.vibrate(20);
                     }
                     if(item.y > 400) items.splice(i,1);
                 });
-
-                ctx.font = "40px Arial";
-                ctx.fillText("❤️", heartX - 20, 380);
+                ctx.font = "40px Arial"; ctx.fillText("❤️", heartX - 20, 380);
             }, 30);
         }
 
@@ -260,44 +247,40 @@
         function initScratch() {
             const canvas = document.getElementById('scratch-pad');
             const ctx = canvas.getContext('2d');
-            ctx.fillStyle = "#555";
-            ctx.fillRect(0,0,300,300);
+            ctx.fillStyle = "#888"; ctx.fillRect(0,0,300,300);
             ctx.globalCompositeOperation = 'destination-out';
-            const scratch = (e) => {
+            const draw = (e) => {
                 const rect = canvas.getBoundingClientRect();
-                const x = (e.clientX || e.touches[0].clientX) - rect.left;
-                const y = (e.clientY || e.touches[0].clientY) - rect.top;
-                ctx.beginPath(); ctx.arc(x, y, 30, 0, Math.PI*2); ctx.fill();
+                const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+                const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+                ctx.beginPath(); ctx.arc(x, y, 35, 0, Math.PI*2); ctx.fill();
             };
-            canvas.ontouchmove = scratch; canvas.onmousemove = scratch;
+            canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); }, {passive: false});
+            canvas.onmousemove = draw;
         }
 
-        // --- CLOCK ---
+        // --- HELPERS ---
         function initClock() {
-            const start = new Date("March 26, 2025 00:00:00").getTime();
+            const start = new Date("March 26, 2025").getTime();
             setInterval(() => {
-                const now = new Date().getTime();
-                document.getElementById('clock').innerText = Math.floor((now - start)/1000).toLocaleString();
+                document.getElementById('clock').innerText = Math.floor((new Date().getTime() - start)/1000).toLocaleString();
             }, 1000);
         }
 
-        // --- REASONS ---
         function newReason() {
-            const r = ["Your kindness.", "The way you say 'I love you'.", "Your support for my JEE prep.", "Your laugh.", "Everything about you."];
+            const r = ["Your kindness.", "The way you support me.", "Your laugh.", "Everything about you."];
             document.getElementById('reason-box').innerText = r[Math.floor(Math.random()*r.length)];
         }
 
-        // --- INFINITY ---
         function initInfinity() {
-            const container = document.getElementById('infinity-content');
+            const cont = document.getElementById('infinity-content');
             const box = document.getElementById('infinity-box');
             const add = () => {
                 for(let i=0; i<30; i++) {
                     const p = document.createElement('p');
                     p.innerText = "I Love You Forever";
-                    p.style.color = `hsl(${Math.random()*20+340}, 100%, 70%)`; // Pink tones
-                    p.style.fontSize = (Math.random()*1.5 + 1) + "rem";
-                    container.appendChild(p);
+                    p.style.color = `hsl(${Math.random()*20+340}, 100%, 75%)`;
+                    cont.appendChild(p);
                 }
             };
             add();

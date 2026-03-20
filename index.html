@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3.26.2026 | Our Story</title>
+    <title>3.26.2026 | Our Forever</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --cherry: #D2042D;
@@ -18,13 +19,25 @@
             overflow: hidden;
         }
 
-        /* The Chapter System */
+        /* Heartbeat Background */
+        #bg-canvas {
+            position: fixed; top: 0; left: 0; z-index: -1;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(1.02); opacity: 0.6; }
+            100% { transform: scale(1); opacity: 0.4; }
+        }
+
+        /* Chapter Engine */
         .chapter {
             position: absolute;
             width: 100%; height: 100%;
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
-            opacity: 0; transform: translateY(50px);
+            opacity: 0; transform: scale(0.9);
             transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: none;
             text-align: center;
@@ -32,96 +45,121 @@
         }
 
         .chapter.active {
-            opacity: 1; transform: translateY(0);
+            opacity: 1; transform: scale(1);
             pointer-events: auto;
         }
 
-        /* UI Elements */
-        h1 { font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: var(--cherry); }
+        /* Navigation */
+        .ui-layer { position: fixed; z-index: 1000; width: 100%; }
+        .progress-bar {
+            top: 20px; display: flex; justify-content: center; gap: 8px;
+        }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: 0.3s; }
+        .dot.active { background: var(--cherry); box-shadow: 0 0 10px var(--cherry); width: 20px; border-radius: 10px; }
+
         .btn-next {
-            position: fixed; bottom: 40px; right: 40px;
+            bottom: 40px; right: 40px; position: fixed;
             background: var(--cherry); color: white; border: none;
-            padding: 15px 30px; border-radius: 50px; cursor: pointer;
-            font-weight: bold; box-shadow: 0 0 20px rgba(210, 4, 45, 0.5);
-            z-index: 1000;
+            padding: 15px 35px; border-radius: 50px; cursor: pointer;
+            font-weight: bold; font-size: 1rem;
+            box-shadow: 0 0 20px rgba(210, 4, 45, 0.4);
+            display: none; /* Hidden until unlocked */
         }
 
+        /* Elements */
+        h1 { font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: var(--cherry); margin-bottom: 10px; }
         .glass-card {
             background: var(--glass); backdrop-filter: blur(15px);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 30px; padding: 40px; max-width: 500px;
+            border-radius: 30px; padding: 30px; width: 90%; max-width: 450px;
         }
 
-        /* Scratch-off Styling */
-        #scratch-canvas { border-radius: 20px; cursor: crosshair; background: #333; }
+        /* Scratch-Off */
+        #scratch-canvas { border-radius: 20px; cursor: crosshair; background: #333; margin: 20px 0; }
 
-        /* Progress Bar */
-        .progress-container {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            display: flex; gap: 8px; z-index: 1000;
+        /* Infinity Scroll Box */
+        .infinity-box {
+            height: 250px; overflow-y: auto; text-align: left;
+            padding: 15px; border-radius: 15px; background: rgba(0,0,0,0.3);
         }
-        .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.2); }
-        .dot.active { background: var(--cherry); box-shadow: 0 0 10px var(--cherry); }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div class="progress-container" id="progressBar"></div>
-    <button class="btn-next" onclick="nextChapter()">Next →</button>
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="ui-layer progress-bar" id="progressBar"></div>
+    <button class="btn-next" id="nextBtn" onclick="nextChapter()">Next Chapter →</button>
 
     <div class="chapter active" id="c1">
-        <h1>Welcome to Our Year</h1>
+        <h1>Chapter 1: The Spark</h1>
         <div class="glass-card">
-            <p>I built this world just for us. It has 12 chapters—one for every month we've spent together.</p>
-            <div style="font-size: 3rem; margin-top: 20px; cursor: grab;" id="drag-heart" draggable="true">❤️</div>
-            <p>Drag the heart to "Start" the journey.</p>
+            <p>Our story is a locked vault. Only your heart can open it.</p>
+            <div id="drop-zone" style="width:80px; height:80px; border:2px dashed var(--cherry); border-radius:50%; margin: 20px auto; display:flex; align-items:center; justify-content:center;">?</div>
+            <div id="drag-heart" draggable="true" ondragstart="drag(event)" style="font-size: 3.5rem; cursor: grab;">❤️</div>
+            <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 10px;">(Drag the heart into the circle)</p>
         </div>
     </div>
 
     <div class="chapter" id="c2">
-        <h1>Distance is Just a Number</h1>
+        <h1>Chapter 2: The Map</h1>
         <div class="glass-card">
-            <p>From Kota to your heart.</p>
-            <div style="font-size: 4rem;">📍 ... 💓</div>
-            <p>No matter how many kilometers, you're always right here.</p>
+            <p>I'm here in <b>Kota</b>, grinding for our future.</p>
+            <div style="font-size: 3rem; margin: 20px 0;">📍 ──────── 💓</div>
+            <p>No matter the distance, every formula I solve leads back to you.</p>
         </div>
     </div>
 
     <div class="chapter" id="c3">
-        <h1>Our First Memory</h1>
-        <p>Scratch to reveal the day it all changed.</p>
+        <h1>Chapter 3: Hidden Magic</h1>
+        <p>Scratch to reveal my favorite photo of us.</p>
         <canvas id="scratch-canvas" width="300" height="300"></canvas>
     </div>
 
     <div class="chapter" id="c4">
-        <h1>Why You?</h1>
-        <div class="glass-card" id="card-box">
-            <h2 id="reason-text">Because you make me laugh.</h2>
-            <button onclick="changeReason()" style="background: none; color: var(--cherry); border: 1px solid var(--cherry); padding: 5px 15px; border-radius: 20px; cursor: pointer;">Next Reason</button>
-        </div>
+        <h1>Chapter 4: Catching Feelings</h1>
+        <p>Score: <span id="score">0</span></p>
+        <canvas id="game-canvas" width="300" height="300" style="border:1px solid var(--cherry); border-radius:15px;"></canvas>
     </div>
 
     <div class="chapter" id="c5">
-        <h1>The Manifestation</h1>
+        <h1>Chapter 5: Why You?</h1>
         <div class="glass-card">
-            <p>On my journey to JEE, you've been my quiet strength.</p>
-            <p>I manifest a 99.95+ percentile not just for me, but for <b>us</b>.</p>
+            <h2 id="reason-text" style="height: 60px;">Because you are my home.</h2>
+            <button onclick="newReason()" style="background:none; border:1px solid var(--cherry); color:white; padding:10px 20px; border-radius:20px; cursor:pointer;">Another Reason?</button>
         </div>
     </div>
 
+    <div class="chapter" id="c6"><h1>Chapter 6: The Laughter</h1><p>Every joke we shared is a treasure.</p></div>
+    <div class="chapter" id="c7"><h1>Chapter 7: The Support</h1><p>Thank you for staying by me through the exams.</p></div>
+    <div class="chapter" id="c8"><h1>Chapter 8: The Late Nights</h1><p>The best calls are the 2 AM ones.</p></div>
+    <div class="chapter" id="c9"><h1>Chapter 9: The Growth</h1><p>How much we've changed in just 365 days.</p></div>
+    <div class="chapter" id="c10"><h1>Chapter 10: The Dreams</h1><p>Everything we planned for our future.</p></div>
+    <div class="chapter" id="c11"><h1>Chapter 11: The Manifestation</h1><p>99.95 Percentile & 100% Yours.</p></div>
+
     <div class="chapter" id="c12">
-        <h1>Happy Anniversary</h1>
-        <p>This is just the beginning of our story.</p>
-        <div style="font-size: 5rem; animation: pulse 1s infinite;">❤️</div>
-        <h2>I Love You</h2>
+        <h1>Chapter 12: The Promise</h1>
+        <div class="glass-card">
+            <p>I loved you yesterday.</p>
+            <p style="font-size: 1.5rem; color: var(--cherry);">I love you still.</p>
+            <p>I always have. I always will.</p>
+            <div style="font-size: 3rem; animation: pulse 1s infinite;">❤️</div>
+        </div>
+    </div>
+
+    <div class="chapter" id="c13">
+        <h1>Chapter 13: Infinity</h1>
+        <div class="glass-card">
+            <div class="infinity-box" id="infinityList"></div>
+            <p style="margin-top: 15px;">Our love is multi-lingual and never-ending.</p>
+        </div>
     </div>
 
     <script>
         let currentChapter = 1;
-        const totalChapters = 12;
+        const totalChapters = 13;
 
-        // Initialize Progress Dots
+        // Init Progress Dots
         const pb = document.getElementById('progressBar');
         for(let i=1; i<=totalChapters; i++) {
             const dot = document.createElement('div');
@@ -130,53 +168,117 @@
             pb.appendChild(dot);
         }
 
+        // --- NAVIGATION ENGINE ---
         function nextChapter() {
             if(currentChapter < totalChapters) {
                 document.getElementById(`c${currentChapter}`).classList.remove('active');
                 document.getElementById(`dot-${currentChapter}`).classList.remove('active');
                 currentChapter++;
-                
-                // Jump logic if the page doesn't exist yet (for demo)
-                const nextEl = document.getElementById(`c${currentChapter}`);
-                if(nextEl) {
-                    nextEl.classList.add('active');
-                } else {
-                    document.getElementById('c12').classList.add('active'); // Jump to end if middle pages missing
-                }
-                
+                document.getElementById(`c${currentChapter}`).classList.add('active');
                 document.getElementById(`dot-${currentChapter}`).classList.add('active');
+                
+                // Trigger specific page logic
                 if(currentChapter === 3) initScratch();
+                if(currentChapter === 4) initGame();
+                if(currentChapter === 13) initInfinity();
+            } else {
+                currentChapter = 1; // Restart loop
+                nextChapter();
             }
         }
 
-        // Scratch Logic
+        // --- DRAG & DROP UNLOCK ---
+        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+        document.getElementById('drop-zone').ondragover = (e) => e.preventDefault();
+        document.getElementById('drop-zone').ondrop = (e) => {
+            e.preventDefault();
+            document.getElementById('drop-zone').innerHTML = "❤️";
+            document.getElementById('drag-heart').style.display = "none";
+            document.getElementById('nextBtn').style.display = "block";
+            alert("Vault Unlocked! Click 'Next' to start.");
+        };
+
+        // --- SCRATCH OFF LOGIC ---
         function initScratch() {
             const canvas = document.getElementById('scratch-canvas');
             const ctx = canvas.getContext('2d');
             ctx.fillStyle = '#4a000e';
             ctx.fillRect(0,0,300,300);
-            ctx.globalCompositeOperation = 'destination-out';
+            ctx.fillStyle = "white";
+            ctx.fillText("SCRATCH HERE", 100, 150);
             
-            canvas.addEventListener('mousemove', (e) => {
+            const scratch = (e) => {
                 const rect = canvas.getBoundingClientRect();
-                ctx.beginPath();
-                ctx.arc(e.clientX - rect.left, e.clientY - rect.top, 20, 0, Math.PI*2);
-                ctx.fill();
-            });
+                const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath(); ctx.arc(x, y, 25, 0, Math.PI*2); ctx.fill();
+            };
+            canvas.onmousemove = scratch;
+            canvas.ontouchmove = scratch;
         }
 
-        // Reasons Logic
-        const reasons = [
-            "Your smile brightens my dark days.",
-            "You support my dreams in Kota.",
-            "The way you say my name.",
-            "You are my favorite distraction."
-        ];
-        let rIdx = 0;
-        function changeReason() {
-            rIdx = (rIdx + 1) % reasons.length;
-            document.getElementById('reason-text').innerText = reasons[rIdx];
+        // --- CATCH HEARTS GAME ---
+        function initGame() {
+            const canvas = document.getElementById('game-canvas');
+            const ctx = canvas.getContext('2d');
+            let score = 0;
+            let hearts = [];
+            
+            const gameLoop = setInterval(() => {
+                if(currentChapter !== 4) { clearInterval(gameLoop); return; }
+                ctx.clearRect(0,0,300,300);
+                if(Math.random() < 0.05) hearts.push({x: Math.random()*280, y:0});
+                hearts.forEach((h, i) => {
+                    h.y += 3;
+                    ctx.fillText("❤️", h.x, h.y);
+                    if(h.y > 280) hearts.splice(i, 1);
+                });
+            }, 30);
+
+            canvas.onclick = (e) => { 
+                score++; 
+                document.getElementById('score').innerText = score;
+                if(score === 10) alert("You're a pro at catching my love!");
+            };
         }
+
+        // --- REASONS ENGINE ---
+        const reasons = [
+            "Because you are my home.", "The way you believe in me.", 
+            "Your 2 AM sleepy voice.", "You make Kota feel less lonely.",
+            "You are the best teammate ever."
+        ];
+        function newReason() {
+            const r = reasons[Math.floor(Math.random()*reasons.length)];
+            document.getElementById('reason-text').innerText = r;
+        }
+
+        // --- INFINITY SCROLL ---
+        function initInfinity() {
+            const list = document.getElementById('infinityList');
+            const phrases = ["I Love You", "Te Amo", "Je t'aime", "Ich liebe dich", "Ti amo", "Main tumse pyar karta hoon", "Wo ai ni", "Saranghae"];
+            for(let i=0; i<100; i++) {
+                const p = document.createElement('p');
+                p.innerText = phrases[i % phrases.length];
+                list.appendChild(p);
+            }
+        }
+
+        // --- BACKGROUND STARS ---
+        const bg = document.getElementById('bg-canvas');
+        const bctx = bg.getContext('2d');
+        bg.width = window.innerWidth; bg.height = window.innerHeight;
+        function drawBg() {
+            bctx.clearRect(0,0,bg.width,bg.height);
+            bctx.fillStyle = "#D2042D";
+            for(let i=0; i<50; i++) {
+                bctx.beginPath();
+                bctx.arc(Math.random()*bg.width, Math.random()*bg.height, 2, 0, Math.PI*2);
+                bctx.fill();
+            }
+        }
+        setInterval(drawBg, 500);
     </script>
 </body>
 </html>

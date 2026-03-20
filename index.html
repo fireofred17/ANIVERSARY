@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our First Year</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cherry-red: #D2042D;
+            --deep-cherry: #8B0000;
+            --soft-pink: #FFF0F0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--soft-pink);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            color: var(--deep-cherry);
+        }
+
+        /* --- Landing Section --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle, #ff4d6d 0%, #D2042D 100%);
+            color: white;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 5rem;
+            margin-bottom: 10px;
+            animation: fadeIn 2s ease-in;
+        }
+
+        .countdown {
+            font-size: 1.5rem;
+            font-weight: 300;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 30px;
+            border-radius: 50px;
+            backdrop-filter: blur(5px);
+        }
+
+        /* --- Memory Grid --- */
+        .memories {
+            padding: 100px 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) rotate(2deg);
+        }
+
+        .photo-placeholder {
+            width: 100%;
+            height: 200px;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            font-style: italic;
+            color: #999;
+        }
+
+        /* --- The Big Surprise --- */
+        .surprise-section {
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .btn-surprise {
+            background: var(--cherry-red);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(210, 4, 45, 0.4);
+            transition: 0.3s;
+        }
+
+        .btn-surprise:hover {
+            background: var(--deep-cherry);
+            transform: scale(1.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <section class="hero">
+        <h1>365 Days of Us</h1>
+        <div class="countdown" id="timer">Loading our time...</div>
+    </section>
+
+    <section class="memories">
+        <h2 style="text-align:center; font-family: 'Dancing Script'; font-size: 3rem;">Our Best Moments</h2>
+        <div class="grid">
+            <div class="card">
+                <div class="photo-placeholder">Insert First Date Photo</div>
+                <p><b>The Day It Began</b><br>I still remember what you were wearing...</p>
+            </div>
+            <div class="card">
+                <div class="photo-placeholder">Insert Favorite Selfie</div>
+                <p><b>My Favorite View</b><br>Nothing beats your smile.</p>
+            </div>
+            <div class="card">
+                <div class="photo-placeholder">Insert Funny Moment</div>
+                <p><b>Pure Chaos</b><br>The time we couldn't stop laughing.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="surprise-section">
+        <h3>Ready for your surprise?</h3>
+        <button class="btn-surprise" onclick="startSurprise()">CLICK ME</button>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        // Set the date we're counting down to
+        const anniversaryDate = new Date("March 26, 2026 00:00:00").getTime();
+
+        const x = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = anniversaryDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("timer").innerHTML = "HAPPY ANNIVERSARY MY LOVE!";
+            } else {
+                document.getElementById("timer").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+            }
+        }, 1000);
+
+        function startSurprise() {
+            const duration = 15 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+                // Cherry colored confetti
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#D2042D', '#8B0000', '#FFB7C5'] }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#D2042D', '#8B0000', '#FFB7C5'] }));
+            }, 250);
+
+            alert("I love you more than words can say. Happy 1 Year!");
+        }
+    </script>
+</body>
+</html>

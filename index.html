@@ -155,7 +155,7 @@
         </div>
     </div>
 
-    <script>
+   <script>
         let currentChapter = 1;
         const totalChapters = 13;
 
@@ -168,12 +168,40 @@
             pb.appendChild(dot);
         }
 
+        // --- THE FIX: UNLOCK LOGIC ---
+        function unlockVault() {
+            document.getElementById('drop-zone').innerHTML = "❤️";
+            document.getElementById('drag-heart').style.opacity = "0";
+            document.getElementById('nextBtn').style.display = "block";
+            // Pulse the next button to show it's ready
+            document.getElementById('nextBtn').animate([
+                { transform: 'scale(1)' },
+                { transform: 'scale(1.1)' },
+                { transform: 'scale(1)' }
+            ], { duration: 1000, iterations: Infinity });
+        }
+
+        // Allow clicking the circle as a backup
+        document.getElementById('drop-zone').onclick = unlockVault;
+
+        // Drag and Drop handlers
+        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+        document.getElementById('drop-zone').ondragover = (e) => e.preventDefault();
+        document.getElementById('drop-zone').ondrop = (e) => {
+            e.preventDefault();
+            unlockVault();
+        };
+
         // --- NAVIGATION ENGINE ---
         function nextChapter() {
             if(currentChapter < totalChapters) {
+                // Hide current
                 document.getElementById(`c${currentChapter}`).classList.remove('active');
                 document.getElementById(`dot-${currentChapter}`).classList.remove('active');
+                
                 currentChapter++;
+                
+                // Show next
                 document.getElementById(`c${currentChapter}`).classList.add('active');
                 document.getElementById(`dot-${currentChapter}`).classList.add('active');
                 
@@ -182,84 +210,96 @@
                 if(currentChapter === 4) initGame();
                 if(currentChapter === 13) initInfinity();
             } else {
-                currentChapter = 1; // Restart loop
-                nextChapter();
+                // Loop back to Chapter 2 (skip the lock)
+                document.getElementById(`c${currentChapter}`).classList.remove('active');
+                document.getElementById(`dot-${currentChapter}`).classList.remove('active');
+                currentChapter = 2;
+                document.getElementById(`c${currentChapter}`).classList.add('active');
+                document.getElementById(`dot-${currentChapter}`).classList.add('active');
             }
         }
-
-        // --- DRAG & DROP UNLOCK ---
-        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
-        document.getElementById('drop-zone').ondragover = (e) => e.preventDefault();
-        document.getElementById('drop-zone').ondrop = (e) => {
-            e.preventDefault();
-            document.getElementById('drop-zone').innerHTML = "❤️";
-            document.getElementById('drag-heart').style.display = "none";
-            document.getElementById('nextBtn').style.display = "block";
-            alert("Vault Unlocked! Click 'Next' to start.");
-        };
 
         // --- SCRATCH OFF LOGIC ---
         function initScratch() {
             const canvas = document.getElementById('scratch-canvas');
             const ctx = canvas.getContext('2d');
+            ctx.globalCompositeOperation = 'source-over';
             ctx.fillStyle = '#4a000e';
             ctx.fillRect(0,0,300,300);
             ctx.fillStyle = "white";
-            ctx.fillText("SCRATCH HERE", 100, 150);
+            ctx.font = "bold 20px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("SCRATCH OUR MEMORY", 150, 150);
             
             const scratch = (e) => {
                 const rect = canvas.getBoundingClientRect();
-                const x = (e.clientX || e.touches[0].clientX) - rect.left;
-                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+                const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+                const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
                 ctx.globalCompositeOperation = 'destination-out';
-                ctx.beginPath(); ctx.arc(x, y, 25, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(x, y, 30, 0, Math.PI*2); ctx.fill();
             };
             canvas.onmousemove = scratch;
             canvas.ontouchmove = scratch;
         }
 
         // --- CATCH HEARTS GAME ---
+        let gameActive = false;
         function initGame() {
+            if(gameActive) return;
+            gameActive = true;
             const canvas = document.getElementById('game-canvas');
             const ctx = canvas.getContext('2d');
             let score = 0;
             let hearts = [];
             
             const gameLoop = setInterval(() => {
-                if(currentChapter !== 4) { clearInterval(gameLoop); return; }
+                if(currentChapter !== 4) { clearInterval(gameLoop); gameActive = false; return; }
                 ctx.clearRect(0,0,300,300);
-                if(Math.random() < 0.05) hearts.push({x: Math.random()*280, y:0});
+                if(Math.random() < 0.08) hearts.push({x: Math.random()*270 + 15, y:0, s: Math.random()*2+2});
+                
                 hearts.forEach((h, i) => {
-                    h.y += 3;
+                    h.y += h.s;
+                    ctx.font = "24px serif";
                     ctx.fillText("❤️", h.x, h.y);
-                    if(h.y > 280) hearts.splice(i, 1);
+                    if(h.y > 300) hearts.splice(i, 1);
                 });
             }, 30);
 
             canvas.onclick = (e) => { 
                 score++; 
                 document.getElementById('score').innerText = score;
-                if(score === 10) alert("You're a pro at catching my love!");
             };
         }
 
         // --- REASONS ENGINE ---
         const reasons = [
-            "Because you are my home.", "The way you believe in me.", 
-            "Your 2 AM sleepy voice.", "You make Kota feel less lonely.",
-            "You are the best teammate ever."
+            "Because you are my home.", 
+            "The way you believe in me even when I don't.", 
+            "Your 2 AM sleepy voice is my favorite song.", 
+            "You make Kota feel like a paradise.",
+            "You're the only 100% I care about this year.",
+            "The way you handle my stress during mocks."
         ];
         function newReason() {
             const r = reasons[Math.floor(Math.random()*reasons.length)];
-            document.getElementById('reason-text').innerText = r;
+            const textEl = document.getElementById('reason-text');
+            textEl.style.opacity = 0;
+            setTimeout(() => {
+                textEl.innerText = r;
+                textEl.style.opacity = 1;
+            }, 300);
         }
 
         // --- INFINITY SCROLL ---
         function initInfinity() {
             const list = document.getElementById('infinityList');
-            const phrases = ["I Love You", "Te Amo", "Je t'aime", "Ich liebe dich", "Ti amo", "Main tumse pyar karta hoon", "Wo ai ni", "Saranghae"];
-            for(let i=0; i<100; i++) {
+            if(list.children.length > 0) return;
+            const phrases = ["I Love You", "Te Amo", "Je t'aime", "Ich liebe dich", "Ti amo", "Main tumse pyar karta hoon", "Wo ai ni", "Saranghae", "Aishiteru", "Eu te amo"];
+            for(let i=0; i<150; i++) {
                 const p = document.createElement('p');
+                p.style.margin = "5px 0";
+                p.style.fontSize = (Math.random() * 0.5 + 1) + "rem";
+                p.style.opacity = Math.random() * 0.5 + 0.5;
                 p.innerText = phrases[i % phrases.length];
                 list.appendChild(p);
             }
@@ -269,16 +309,26 @@
         const bg = document.getElementById('bg-canvas');
         const bctx = bg.getContext('2d');
         bg.width = window.innerWidth; bg.height = window.innerHeight;
+        let stars = Array(100).fill().map(() => ({
+            x: Math.random() * bg.width,
+            y: Math.random() * bg.height,
+            r: Math.random() * 2,
+            o: Math.random()
+        }));
+
         function drawBg() {
             bctx.clearRect(0,0,bg.width,bg.height);
-            bctx.fillStyle = "#D2042D";
-            for(let i=0; i<50; i++) {
+            stars.forEach(s => {
+                bctx.fillStyle = `rgba(210, 4, 45, ${s.o})`;
                 bctx.beginPath();
-                bctx.arc(Math.random()*bg.width, Math.random()*bg.height, 2, 0, Math.PI*2);
+                bctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
                 bctx.fill();
-            }
+                s.o += (Math.random() - 0.5) * 0.1;
+                if(s.o < 0) s.o = 0; if(s.o > 1) s.o = 1;
+            });
+            requestAnimationFrame(drawBg);
         }
-        setInterval(drawBg, 500);
+        drawBg();
     </script>
 </body>
 </html>

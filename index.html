@@ -2,248 +2,331 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3.26.2026 | Rainbow of Us</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>3.26.2026 | Our Forever</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --cherry: #D2042D;
-            --rainbow-1: #ff5e62;
-            --rainbow-2: #ff9966;
-            --rainbow-3: #7ed56f;
-            --rainbow-4: #2998ff;
-            --rainbow-5: #a166ab;
-            --glass: rgba(255, 255, 255, 0.12);
+            --sunset: linear-gradient(45deg, #ff5e62, #ff9966, #7ed56f, #2998ff, #a166ab);
+            --glass: rgba(255, 255, 255, 0.1);
         }
 
         body, html {
             margin: 0; padding: 0; height: 100%;
-            background: #1a0004;
-            color: white;
+            background: #0f0c29; color: white;
             font-family: 'Montserrat', sans-serif;
-            overflow: hidden;
-            transition: background 1.5s ease;
+            overflow: hidden; transition: background 2s ease;
         }
 
-        /* Rainbow Star Background */
-        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.6; }
+        #canvas-bg { position: fixed; top: 0; left: 0; z-index: -1; }
 
+        /* The Chapter System */
         .chapter {
-            position: absolute;
-            width: 100%; height: 100%;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            opacity: 0; transform: translateY(20px);
-            transition: all 0.6s ease-in-out;
-            pointer-events: none;
-            text-align: center;
-            padding: 20px; box-sizing: border-box;
+            position: absolute; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; transform: scale(1.1); transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none; text-align: center; padding: 20px; box-sizing: border-box;
         }
 
-        .chapter.active { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .chapter.active { opacity: 1; transform: scale(1); pointer-events: auto; }
 
-        .progress-bar {
-            position: fixed; top: 20px; width: 100%;
-            display: flex; justify-content: center; gap: 6px; z-index: 1000;
+        /* Navigation UI */
+        .progress-container {
+            position: fixed; top: 30px; width: 100%; display: flex; justify-content: center; gap: 5px; z-index: 1000;
         }
-        .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.3); transition: 0.3s; }
-        .dot.active { background: var(--cherry); width: 18px; border-radius: 10px; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: 0.5s; }
+        .dot.active { background: #ff5e62; width: 25px; border-radius: 10px; box-shadow: 0 0 15px #ff5e62; }
 
-        .btn-next {
-            position: fixed; bottom: 30px; right: 30px;
-            background: var(--cherry); color: white; border: none;
-            padding: 12px 25px; border-radius: 50px; cursor: pointer;
-            font-weight: bold; z-index: 2000; display: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        .next-btn {
+            position: fixed; bottom: 40px; right: 40px;
+            background: white; color: var(--cherry); border: none;
+            padding: 15px 30px; border-radius: 50px; cursor: pointer;
+            font-weight: 800; font-size: 1rem; z-index: 2000;
+            display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: 0.3s;
         }
+        .next-btn:hover { transform: translateY(-5px); background: var(--cherry); color: white; }
 
+        /* Specialized Components */
         .glass-card {
-            background: var(--glass); backdrop-filter: blur(10px);
+            background: var(--glass); backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 25px; padding: 25px; width: 85%; max-width: 400px;
+            border-radius: 30px; padding: 30px; width: 90%; max-width: 450px;
         }
 
-        h1 { font-family: 'Dancing Script', cursive; font-size: 2.8rem; margin: 10px 0; color: #ffb7c5; }
-        p { line-height: 1.5; font-size: 0.95rem; }
+        h1 { font-family: 'Dancing Script', cursive; font-size: 3rem; margin: 0; color: #ffb7c5; }
+        
+        /* The Infinity Scroll Container */
+        #infinity-wrapper {
+            height: 300px; overflow-y: scroll; width: 100%;
+            border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+            padding: 20px; box-sizing: border-box; background: rgba(0,0,0,0.2);
+        }
 
-        #scratch-canvas { border-radius: 15px; background: #222; touch-action: none; cursor: crosshair; }
-        .infinity-box { height: 200px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; text-align: left; }
+        /* 3D Photo Frame */
+        .photo-frame {
+            width: 200px; height: 250px; background: #eee;
+            border: 10px solid white; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            transform: rotate(-5deg); transition: 0.5s; cursor: pointer;
+        }
+        .photo-frame:hover { transform: rotate(0deg) scale(1.1); }
+
+        /* Game Styles */
+        #game-canvas { border: 2px solid white; border-radius: 20px; background: rgba(255,255,255,0.05); }
     </style>
 </head>
 <body>
 
-    <canvas id="bg-canvas"></canvas>
-    <div class="progress-bar" id="progressBar"></div>
-    <button class="btn-next" id="nextBtn" onclick="nextChapter()">Next →</button>
+    <canvas id="canvas-bg"></canvas>
+    <div class="progress-container" id="dots"></div>
+    <button class="next-btn" id="nextBtn" onclick="nextStep()">Next Chapter →</button>
 
     <div class="chapter active" id="c1">
-        <h1>The Spark</h1>
+        <h1>Hello, My Rainbow</h1>
         <div class="glass-card">
-            <p>Our story is a locked vault. Only your heart can open it.</p>
-            <div id="drop-zone" style="width:80px; height:80px; border:2px dashed #ffb7c5; border-radius:50%; margin:20px auto; display:flex; align-items:center; justify-content:center; cursor:pointer;">?</div>
-            <div id="drag-heart" draggable="true" ondragstart="drag(event)" style="font-size:3rem; cursor:grab;">❤️</div>
-            <p style="font-size:0.7rem; opacity:0.7;">(Tap the circle or drag the heart)</p>
+            <p>Drag my heart to yours to begin our story.</p>
+            <div id="drop-circle" style="width:100px; height:100px; border:3px dashed white; border-radius:50%; margin:30px auto; display:flex; align-items:center; justify-content:center; font-size:2rem;">?</div>
+            <div id="heart-dragger" draggable="true" ondragstart="startDrag(event)" style="font-size:4rem; cursor:grab; filter: drop-shadow(0 0 10px var(--cherry));">❤️</div>
+            <p style="font-size:0.7rem; opacity:0.6;">(Or just tap the circle if on mobile)</p>
         </div>
     </div>
 
     <div class="chapter" id="c2">
-        <h1>Distance</h1>
+        <h1>Where We Are</h1>
         <div class="glass-card">
-            <p>From <b>Kota</b> to your heart.</p>
-            <div style="font-size:2.5rem; margin:15px 0;">📍 ─── 💓</div>
-            <p>No matter the distance, you are the only variable that matters.</p>
+            <p>I'm in Kota, studying for us.</p>
+            <div style="font-size:3rem; margin:20px;">📚 ✈️ 🏠</div>
+            <p>Every physics law I learn confirms one thing: Gravity pulls me to you.</p>
         </div>
     </div>
 
     <div class="chapter" id="c3">
-        <h1>Hidden Magic</h1>
-        <p>Scratch to reveal a memory.</p>
-        <canvas id="scratch-canvas" width="280" height="280"></canvas>
+        <h1>Hidden Treasure</h1>
+        <p>Use your finger to reveal our first date.</p>
+        <canvas id="scratch" width="300" height="300"></canvas>
     </div>
 
     <div class="chapter" id="c4">
-        <h1>Catch My Love</h1>
-        <p>Score: <span id="score">0</span></p>
-        <canvas id="game-canvas" width="280" height="250" style="border:1px solid rgba(255,255,255,0.2); border-radius:15px;"></canvas>
+        <h1>Heart Defender</h1>
+        <p>Protect our heart from the raindrops! Score: <span id="game-score">0</span></p>
+        <canvas id="game-canvas" width="320" height="350"></canvas>
     </div>
 
     <div class="chapter" id="c5">
-        <h1>Why You?</h1>
+        <h1>1,000 Reasons</h1>
         <div class="glass-card">
-            <h3 id="reason-text">Because you are my home.</h3>
-            <button onclick="newReason()" style="background:none; border:1px solid white; color:white; padding:8px 15px; border-radius:20px; cursor:pointer; font-size:0.8rem;">Another Reason?</button>
+            <h2 id="reason-display">Because you are my home.</h2>
+            <button onclick="shuffleReasons()" style="background:var(--cherry); border:none; color:white; padding:10px 20px; border-radius:20px; cursor:pointer;">Show me another</button>
         </div>
     </div>
 
-    <div class="chapter" id="c6"><h1>The Laughter</h1><p>Every "inside joke" is a world of its own.</p></div>
-    <div class="chapter" id="c7"><h1>The Support</h1><p>You stayed by me during the toughest mock tests.</p></div>
-    <div class="chapter" id="c8"><h1>The Late Nights</h1><p>The 2 AM calls that feel like 2 minutes.</p></div>
-    <div class="chapter" id="c9"><h1>The Growth</h1><p>We've become better versions of ourselves together.</p></div>
-    <div class="chapter" id="c10"><h1>The Dreams</h1><p>I can't wait for all the trips we've planned.</p></div>
-    <div class="chapter" id="c11"><h1>The Manifestation</h1><p>99.95 Percentile & 100% Yours.</p></div>
+    <div class="chapter" id="c6">
+        <h1>A Snapshot in Time</h1>
+        <div class="photo-frame">
+            <div style="width:100%; height:100%; background:#333; display:flex; align-items:center; justify-content:center;">
+               <p style="color:white; font-size:0.8rem;">[Your Photo Here]</p>
+            </div>
+        </div>
+        <p style="margin-top:20px;">The moment I knew it was you.</p>
+    </div>
+
+    <div class="chapter" id="c7">
+        <h1>The Manifestation</h1>
+        <div class="glass-card">
+            <p>I write my goals every day.</p>
+            <h2 style="color:#ffb7c5;">99.95 Percentile</h2>
+            <p>But you are the only rank that matters to me.</p>
+        </div>
+    </div>
+
+    <div class="chapter" id="c8">
+        <h1>Our Symphony</h1>
+        <div style="display:flex; gap:10px; align-items:flex-end; height:100px;">
+            <div class="bar" style="width:20px; background:white; animation: dance 0.5s infinite;"></div>
+            <div class="bar" style="width:20px; background:#ff5e62; animation: dance 0.8s infinite;"></div>
+            <div class="bar" style="width:20px; background:white; animation: dance 0.6s infinite;"></div>
+            <div class="bar" style="width:20px; background:#ff5e62; animation: dance 0.4s infinite;"></div>
+        </div>
+        <p>The sound of your laugh is my favorite song.</p>
+    </div>
+
+    <div class="chapter" id="c9">
+        <h1>A Sweet Memory</h1>
+        <div class="glass-card">
+            <span style="font-size:5rem;">🍫</span>
+            <p>February 9th. Chocolate Day.</p>
+            <p>Even the sweetest chocolate is bitter compared to you.</p>
+        </div>
+    </div>
+
+    <div class="chapter" id="c10">
+        <h1>Seconds of Love</h1>
+        <div class="glass-card">
+            <h1 id="timer" style="font-size:2rem;">Calculating...</h1>
+            <p>Seconds spent loving you so far.</p>
+        </div>
+    </div>
+
+    <div class="chapter" id="c11">
+        <h1>The Anniversary</h1>
+        <div class="glass-card">
+            <p>March 26, 2026</p>
+            <h1>1 Year.</h1>
+            <p>365 days of learning who you are, and loving every bit of it.</p>
+        </div>
+    </div>
 
     <div class="chapter" id="c12">
-        <h1>The Promise</h1>
-        <div class="glass-card">
-            <p>I loved you yesterday.</p>
-            <p style="font-size: 1.3rem; color: var(--cherry);">I love you still.</p>
-            <p>Always have. Always will.</p>
-            <div style="font-size:2rem; animation:pulse 1s infinite;">❤️</div>
-        </div>
+        <h1>My Forever</h1>
+        <div style="font-size:6rem; animation: pulse 1s infinite;">❤️</div>
+        <p>Are you ready for the final truth?</p>
     </div>
 
     <div class="chapter" id="c13">
-        <h1>Infinity</h1>
-        <div class="glass-card">
-            <div class="infinity-box" id="infinityList"></div>
-            <p style="margin-top:10px; font-size:0.8rem;">This list never ends, just like us.</p>
+        <h1>The Infinite Love</h1>
+        <div id="infinity-wrapper">
+            <div id="infinity-content"></div>
         </div>
+        <p style="margin-top:10px;">Keep scrolling. It literally never ends.</p>
     </div>
 
     <script>
-        let currentChapter = 1;
-        const totalChapters = 13;
+        let current = 1;
+        const total = 13;
 
-        // Init Progress Bar
-        const pb = document.getElementById('progressBar');
-        for(let i=1; i<=totalChapters; i++) {
-            const dot = document.createElement('div');
-            dot.className = `dot ${i===1 ? 'active' : ''}`;
-            dot.id = `dot-${i}`;
-            pb.appendChild(dot);
+        // Init Progress Dots
+        const dots = document.getElementById('dots');
+        for(let i=1; i<=total; i++) {
+            const d = document.createElement('div');
+            d.className = `dot ${i===1?'active':''}`;
+            d.id = `dot-${i}`;
+            dots.appendChild(d);
         }
 
-        // --- UNLOCK ---
-        function unlock() {
-            document.getElementById('drop-zone').innerHTML = "❤️";
-            document.getElementById('drag-heart').style.display = "none";
-            document.getElementById('nextBtn').style.display = "block";
-        }
-        document.getElementById('drop-zone').onclick = unlock;
-        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
-        document.getElementById('drop-zone').ondragover = (e) => e.preventDefault();
-        document.getElementById('drop-zone').ondrop = (e) => { e.preventDefault(); unlock(); };
-
-        // --- NAV ---
-        function nextChapter() {
-            if(currentChapter < totalChapters) {
-                document.getElementById(`c${currentChapter}`).classList.remove('active');
-                document.getElementById(`dot-${currentChapter}`).classList.remove('active');
-                currentChapter++;
-                document.getElementById(`c${currentChapter}`).classList.add('active');
-                document.getElementById(`dot-${currentChapter}`).classList.add('active');
+        // --- NAVIGATION ---
+        function nextStep() {
+            if(current < total) {
+                document.getElementById(`c${current}`).classList.remove('active');
+                document.getElementById(`dot-${current}`).classList.remove('active');
+                current++;
+                document.getElementById(`c${current}`).classList.add('active');
+                document.getElementById(`dot-${current}`).classList.add('active');
                 
-                // Color Shift Background
-                const colors = ['#1a0004', '#1a0020', '#001a1a', '#201a00', '#1a0004'];
-                document.body.style.background = colors[currentChapter % colors.length];
+                // Theme Shift
+                const colors = ['#0f0c29', '#24243e', '#1a0004', '#000000', '#2d3436', '#0f0c29'];
+                document.body.style.background = colors[current % colors.length];
 
-                if(currentChapter === 3) initScratch();
-                if(currentChapter === 4) initGame();
-                if(currentChapter === 13) initInfinity();
+                // Logic Triggers
+                if(current === 3) initScratch();
+                if(current === 4) initGame();
+                if(current === 10) startTimer();
+                if(current === 13) initInfinity();
             }
         }
 
-        // --- FEATURES ---
+        // --- 1: UNLOCK ---
+        function unlock() {
+            document.getElementById('drop-circle').innerHTML = "❤️";
+            document.getElementById('heart-dragger').style.display = "none";
+            document.getElementById('nextBtn').style.display = "block";
+        }
+        document.getElementById('drop-circle').onclick = unlock;
+        function startDrag(e) { e.dataTransfer.setData("text", "heart"); }
+        document.getElementById('drop-circle').ondragover = (e) => e.preventDefault();
+        document.getElementById('drop-circle').ondrop = unlock;
+
+        // --- 3: SCRATCH ---
         function initScratch() {
-            const canvas = document.getElementById('scratch-canvas');
+            const canvas = document.getElementById('scratch');
             const ctx = canvas.getContext('2d');
             ctx.fillStyle = '#444';
-            ctx.fillRect(0,0,280,280);
+            ctx.fillRect(0,0,300,300);
             ctx.globalCompositeOperation = 'destination-out';
-            const scratch = (e) => {
+            const draw = (e) => {
                 const rect = canvas.getBoundingClientRect();
-                const x = (e.clientX || (e.touches ? e.touches[0].clientX : 0)) - rect.left;
-                const y = (e.clientY || (e.touches ? e.touches[0].clientY : 0)) - rect.top;
-                ctx.beginPath(); ctx.arc(x, y, 25, 0, Math.PI*2); ctx.fill();
+                const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+                ctx.beginPath(); ctx.arc(x, y, 30, 0, Math.PI*2); ctx.fill();
             };
-            canvas.onmousemove = scratch; canvas.ontouchmove = scratch;
+            canvas.ontouchmove = draw; canvas.onmousemove = draw;
         }
 
+        // --- 4: GAME ---
         function initGame() {
             const canvas = document.getElementById('game-canvas');
             const ctx = canvas.getContext('2d');
-            let score = 0;
-            let hearts = [];
+            let score = 0; let particles = [];
             const loop = setInterval(() => {
-                if(currentChapter !== 4) { clearInterval(loop); return; }
-                ctx.clearRect(0,0,280,250);
-                if(Math.random() < 0.05) hearts.push({x: Math.random()*260, y:0});
-                hearts.forEach((h, i) => {
-                    h.y += 3;
-                    ctx.fillText("❤️", h.x, h.y);
-                    if(h.y > 250) hearts.splice(i, 1);
+                if(current !== 4) { clearInterval(loop); return; }
+                ctx.clearRect(0,0,320,350);
+                if(Math.random() < 0.1) particles.push({x: Math.random()*300, y: 0});
+                particles.forEach((p, i) => {
+                    p.y += 4;
+                    ctx.fillText("💧", p.x, p.y);
+                    if(p.y > 350) particles.splice(i, 1);
                 });
+                ctx.font = "40px serif"; ctx.fillText("❤️", 140, 320);
             }, 30);
-            canvas.onclick = () => { score++; document.getElementById('score').innerText = score; };
+            canvas.onclick = () => { score++; document.getElementById('game-score').innerText = score; };
         }
 
-        function newReason() {
-            const r = ["You are my home.", "Your 2 AM voice.", "You believe in me.", "Your smile.", "You are my peace."];
-            document.getElementById('reason-text').innerText = r[Math.floor(Math.random()*r.length)];
+        // --- 5: REASONS ---
+        function shuffleReasons() {
+            const r = ["Your kindness.", "How you support my JEE goals.", "Your eyes.", "Everything about you.", "The way you say my name.", "Your laugh."];
+            document.getElementById('reason-display').innerText = r[Math.floor(Math.random()*r.length)];
         }
 
+        // --- 10: TIMER ---
+        function startTimer() {
+            const start = new Date("March 26, 2025").getTime();
+            setInterval(() => {
+                const now = new Date().getTime();
+                document.getElementById('timer').innerText = Math.floor((now - start)/1000).toLocaleString();
+            }, 1000);
+        }
+
+        // --- 13: INFINITY ---
         function initInfinity() {
-            const list = document.getElementById('infinityList');
-            for(let i=0; i<100; i++) {
-                const p = document.createElement('p');
-                p.innerText = "I Love You";
-                p.style.color = `hsl(${Math.random()*360}, 70%, 70%)`;
-                list.appendChild(p);
-            }
+            const container = document.getElementById('infinity-content');
+            const wrapper = document.getElementById('infinity-wrapper');
+            const addContent = () => {
+                for(let i=0; i<50; i++) {
+                    const p = document.createElement('p');
+                    p.innerHTML = "I Love You Forever";
+                    p.style.fontSize = Math.random()*2 + 1 + "rem";
+                    p.style.color = `hsl(${Math.random()*360}, 70%, 70%)`;
+                    p.style.opacity = Math.random();
+                    container.appendChild(p);
+                }
+            };
+            addContent();
+            wrapper.onscroll = () => {
+                if(wrapper.scrollTop + wrapper.offsetHeight >= wrapper.scrollHeight - 100) {
+                    addContent(); // Keep generating content
+                }
+            };
         }
 
-        // Rainbow Stars
-        const bg = document.getElementById('bg-canvas');
+        // --- BACKGROUND ---
+        const bg = document.getElementById('canvas-bg');
         const bctx = bg.getContext('2d');
         bg.width = window.innerWidth; bg.height = window.innerHeight;
-        function drawBg() {
+        function drawStars() {
             bctx.clearRect(0,0,bg.width,bg.height);
-            for(let i=0; i<60; i++) {
-                bctx.fillStyle = `hsla(${Math.random()*360}, 70%, 80%, 0.5)`;
-                bctx.beginPath(); bctx.arc(Math.random()*bg.width, Math.random()*bg.height, 1.5, 0, Math.PI*2); bctx.fill();
+            for(let i=0; i<100; i++) {
+                bctx.fillStyle = `hsla(${Math.random()*360}, 100%, 50%, 0.3)`;
+                bctx.beginPath(); bctx.arc(Math.random()*bg.width, Math.random()*bg.height, Math.random()*2, 0, Math.PI*2); bctx.fill();
             }
         }
-        setInterval(drawBg, 150);
+        setInterval(drawStars, 100);
+
+        window.onresize = () => { bg.width = window.innerWidth; bg.height = window.innerHeight; };
     </script>
+
+    <style>
+        @keyframes dance { from { height: 20px; } to { height: 80px; } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    </style>
 </body>
 </html>

@@ -7,14 +7,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
     <style>
         :root {
+            /* Rainbow / Dreamy Sunset Theme */
             --cherry: #D2042D;
+            --sunset-orange: #ff5e62;
+            --sunset-purple: #4e4376;
             --deep: #1a0004;
-            --glass: rgba(255, 255, 255, 0.1);
+            --glass: rgba(255, 255, 255, 0.15);
         }
 
         body, html {
             margin: 0; padding: 0; height: 100%;
-            background: var(--deep); color: white;
+            /* Rainbow Gradient Background */
+            background: linear-gradient(135deg, #1a0004 0%, #4e4376 50%, #2e0008 100%);
+            color: white;
             font-family: 'Montserrat', sans-serif;
             overflow: hidden;
         }
@@ -22,16 +27,9 @@
         /* Heartbeat Background */
         #bg-canvas {
             position: fixed; top: 0; left: 0; z-index: -1;
-            animation: pulse 2s infinite ease-in-out;
+            opacity: 0.5;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.4; }
-            50% { transform: scale(1.02); opacity: 0.6; }
-            100% { transform: scale(1); opacity: 0.4; }
-        }
-
-        /* Chapter Engine */
         .chapter {
             position: absolute;
             width: 100%; height: 100%;
@@ -49,11 +47,8 @@
             pointer-events: auto;
         }
 
-        /* Navigation */
         .ui-layer { position: fixed; z-index: 1000; width: 100%; }
-        .progress-bar {
-            top: 20px; display: flex; justify-content: center; gap: 8px;
-        }
+        .progress-bar { top: 20px; display: flex; justify-content: center; gap: 8px; }
         .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: 0.3s; }
         .dot.active { background: var(--cherry); box-shadow: 0 0 10px var(--cherry); width: 20px; border-radius: 10px; }
 
@@ -62,42 +57,46 @@
             background: var(--cherry); color: white; border: none;
             padding: 15px 35px; border-radius: 50px; cursor: pointer;
             font-weight: bold; font-size: 1rem;
-            box-shadow: 0 0 20px rgba(210, 4, 45, 0.4);
-            display: none; /* Hidden until unlocked */
+            box-shadow: 0 0 20px rgba(210, 4, 45, 0.6);
+            display: none; /* Initially hidden */
+            z-index: 2000;
         }
 
-        /* Elements */
-        h1 { font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: var(--cherry); margin-bottom: 10px; }
+        h1 { font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: #ffb7c5; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
+        
         .glass-card {
             background: var(--glass); backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
             border-radius: 30px; padding: 30px; width: 90%; max-width: 450px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
-        /* Scratch-Off */
-        #scratch-canvas { border-radius: 20px; cursor: crosshair; background: #333; margin: 20px 0; }
-
-        /* Infinity Scroll Box */
-        .infinity-box {
-            height: 250px; overflow-y: auto; text-align: left;
-            padding: 15px; border-radius: 15px; background: rgba(0,0,0,0.3);
+        #drop-zone {
+            width:100px; height:100px; border:2px dashed #ffb7c5; 
+            border-radius:50%; margin: 20px auto; 
+            display:flex; align-items:center; justify-content:center;
+            cursor: pointer; transition: 0.3s;
         }
+        
+        #drop-zone:hover { background: rgba(255,183,197,0.2); }
+
+        #scratch-canvas { border-radius: 20px; cursor: crosshair; background: #333; margin: 20px 0; touch-action: none; }
+        .infinity-box { height: 250px; overflow-y: auto; text-align: left; padding: 15px; border-radius: 15px; background: rgba(0,0,0,0.4); }
     </style>
 </head>
 <body>
 
     <canvas id="bg-canvas"></canvas>
-
     <div class="ui-layer progress-bar" id="progressBar"></div>
     <button class="btn-next" id="nextBtn" onclick="nextChapter()">Next Chapter →</button>
 
     <div class="chapter active" id="c1">
-        <h1>Chapter 1: The Spark</h1>
+        <h1>Rainbow of Us</h1>
         <div class="glass-card">
-            <p>Our story is a locked vault. Only your heart can open it.</p>
-            <div id="drop-zone" style="width:80px; height:80px; border:2px dashed var(--cherry); border-radius:50%; margin: 20px auto; display:flex; align-items:center; justify-content:center;">?</div>
+            <p>Our first year has been a dream.</p>
+            <div id="drop-zone" title="Click or Drag Heart Here">?</div>
             <div id="drag-heart" draggable="true" ondragstart="drag(event)" style="font-size: 3.5rem; cursor: grab;">❤️</div>
-            <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 10px;">(Drag the heart into the circle)</p>
+            <p style="font-size: 0.8rem; opacity: 0.8; margin-top: 10px;">Tap or Drag the heart to the circle</p>
         </div>
     </div>
 
@@ -106,60 +105,28 @@
         <div class="glass-card">
             <p>I'm here in <b>Kota</b>, grinding for our future.</p>
             <div style="font-size: 3rem; margin: 20px 0;">📍 ──────── 💓</div>
-            <p>No matter the distance, every formula I solve leads back to you.</p>
+            <p>Every formula leads back to you.</p>
         </div>
     </div>
 
     <div class="chapter" id="c3">
         <h1>Chapter 3: Hidden Magic</h1>
-        <p>Scratch to reveal my favorite photo of us.</p>
         <canvas id="scratch-canvas" width="300" height="300"></canvas>
-    </div>
-
-    <div class="chapter" id="c4">
-        <h1>Chapter 4: Catching Feelings</h1>
-        <p>Score: <span id="score">0</span></p>
-        <canvas id="game-canvas" width="300" height="300" style="border:1px solid var(--cherry); border-radius:15px;"></canvas>
-    </div>
-
-    <div class="chapter" id="c5">
-        <h1>Chapter 5: Why You?</h1>
-        <div class="glass-card">
-            <h2 id="reason-text" style="height: 60px;">Because you are my home.</h2>
-            <button onclick="newReason()" style="background:none; border:1px solid var(--cherry); color:white; padding:10px 20px; border-radius:20px; cursor:pointer;">Another Reason?</button>
-        </div>
-    </div>
-
-    <div class="chapter" id="c6"><h1>Chapter 6: The Laughter</h1><p>Every joke we shared is a treasure.</p></div>
-    <div class="chapter" id="c7"><h1>Chapter 7: The Support</h1><p>Thank you for staying by me through the exams.</p></div>
-    <div class="chapter" id="c8"><h1>Chapter 8: The Late Nights</h1><p>The best calls are the 2 AM ones.</p></div>
-    <div class="chapter" id="c9"><h1>Chapter 9: The Growth</h1><p>How much we've changed in just 365 days.</p></div>
-    <div class="chapter" id="c10"><h1>Chapter 10: The Dreams</h1><p>Everything we planned for our future.</p></div>
-    <div class="chapter" id="c11"><h1>Chapter 11: The Manifestation</h1><p>99.95 Percentile & 100% Yours.</p></div>
-
-    <div class="chapter" id="c12">
-        <h1>Chapter 12: The Promise</h1>
-        <div class="glass-card">
-            <p>I loved you yesterday.</p>
-            <p style="font-size: 1.5rem; color: var(--cherry);">I love you still.</p>
-            <p>I always have. I always will.</p>
-            <div style="font-size: 3rem; animation: pulse 1s infinite;">❤️</div>
-        </div>
     </div>
 
     <div class="chapter" id="c13">
         <h1>Chapter 13: Infinity</h1>
         <div class="glass-card">
             <div class="infinity-box" id="infinityList"></div>
-            <p style="margin-top: 15px;">Our love is multi-lingual and never-ending.</p>
+            <p style="margin-top: 15px;">Never-ending, just like us.</p>
         </div>
     </div>
 
-   <script>
+    <script>
         let currentChapter = 1;
         const totalChapters = 13;
 
-        // Init Progress Dots
+        // Progress Dots
         const pb = document.getElementById('progressBar');
         for(let i=1; i<=totalChapters; i++) {
             const dot = document.createElement('div');
@@ -168,167 +135,87 @@
             pb.appendChild(dot);
         }
 
-        // --- THE FIX: UNLOCK LOGIC ---
+        // --- FIXED UNLOCK LOGIC ---
         function unlockVault() {
-            document.getElementById('drop-zone').innerHTML = "❤️";
-            document.getElementById('drag-heart').style.opacity = "0";
-            document.getElementById('nextBtn').style.display = "block";
-            // Pulse the next button to show it's ready
-            document.getElementById('nextBtn').animate([
-                { transform: 'scale(1)' },
-                { transform: 'scale(1.1)' },
-                { transform: 'scale(1)' }
+            const dropZone = document.getElementById('drop-zone');
+            const dragHeart = document.getElementById('drag-heart');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            dropZone.innerHTML = "❤️";
+            dropZone.style.border = "none";
+            dragHeart.style.display = "none";
+            nextBtn.style.display = "block"; // FORCING BUTTON TO SHOW
+            
+            // Animation for visual confirmation
+            nextBtn.animate([
+                { transform: 'scale(1)', background: '#D2042D' },
+                { transform: 'scale(1.1)', background: '#ff5e62' },
+                { transform: 'scale(1)', background: '#D2042D' }
             ], { duration: 1000, iterations: Infinity });
         }
 
-        // Allow clicking the circle as a backup
         document.getElementById('drop-zone').onclick = unlockVault;
-
-        // Drag and Drop handlers
         function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
         document.getElementById('drop-zone').ondragover = (e) => e.preventDefault();
-        document.getElementById('drop-zone').ondrop = (e) => {
-            e.preventDefault();
-            unlockVault();
-        };
+        document.getElementById('drop-zone').ondrop = (e) => { e.preventDefault(); unlockVault(); };
 
-        // --- NAVIGATION ENGINE ---
         function nextChapter() {
             if(currentChapter < totalChapters) {
-                // Hide current
                 document.getElementById(`c${currentChapter}`).classList.remove('active');
                 document.getElementById(`dot-${currentChapter}`).classList.remove('active');
-                
                 currentChapter++;
-                
-                // Show next
                 document.getElementById(`c${currentChapter}`).classList.add('active');
                 document.getElementById(`dot-${currentChapter}`).classList.add('active');
                 
-                // Trigger specific page logic
                 if(currentChapter === 3) initScratch();
-                if(currentChapter === 4) initGame();
                 if(currentChapter === 13) initInfinity();
-            } else {
-                // Loop back to Chapter 2 (skip the lock)
-                document.getElementById(`c${currentChapter}`).classList.remove('active');
-                document.getElementById(`dot-${currentChapter}`).classList.remove('active');
-                currentChapter = 2;
-                document.getElementById(`c${currentChapter}`).classList.add('active');
-                document.getElementById(`dot-${currentChapter}`).classList.add('active');
             }
         }
 
-        // --- SCRATCH OFF LOGIC ---
+        // Fix Scratch-off for mobile
         function initScratch() {
             const canvas = document.getElementById('scratch-canvas');
             const ctx = canvas.getContext('2d');
-            ctx.globalCompositeOperation = 'source-over';
             ctx.fillStyle = '#4a000e';
             ctx.fillRect(0,0,300,300);
-            ctx.fillStyle = "white";
-            ctx.font = "bold 20px Arial";
-            ctx.textAlign = "center";
-            ctx.fillText("SCRATCH OUR MEMORY", 150, 150);
+            ctx.globalCompositeOperation = 'destination-out';
             
-            const scratch = (e) => {
+            const handleScratch = (e) => {
+                e.preventDefault();
                 const rect = canvas.getBoundingClientRect();
-                const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
-                const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
-                ctx.globalCompositeOperation = 'destination-out';
-                ctx.beginPath(); ctx.arc(x, y, 30, 0, Math.PI*2); ctx.fill();
+                const x = (e.clientX || (e.touches ? e.touches[0].clientX : 0)) - rect.left;
+                const y = (e.clientY || (e.touches ? e.touches[0].clientY : 0)) - rect.top;
+                ctx.beginPath(); ctx.arc(x, y, 25, 0, Math.PI*2); ctx.fill();
             };
-            canvas.onmousemove = scratch;
-            canvas.ontouchmove = scratch;
+            canvas.addEventListener('mousemove', handleScratch);
+            canvas.addEventListener('touchmove', handleScratch);
         }
 
-        // --- CATCH HEARTS GAME ---
-        let gameActive = false;
-        function initGame() {
-            if(gameActive) return;
-            gameActive = true;
-            const canvas = document.getElementById('game-canvas');
-            const ctx = canvas.getContext('2d');
-            let score = 0;
-            let hearts = [];
-            
-            const gameLoop = setInterval(() => {
-                if(currentChapter !== 4) { clearInterval(gameLoop); gameActive = false; return; }
-                ctx.clearRect(0,0,300,300);
-                if(Math.random() < 0.08) hearts.push({x: Math.random()*270 + 15, y:0, s: Math.random()*2+2});
-                
-                hearts.forEach((h, i) => {
-                    h.y += h.s;
-                    ctx.font = "24px serif";
-                    ctx.fillText("❤️", h.x, h.y);
-                    if(h.y > 300) hearts.splice(i, 1);
-                });
-            }, 30);
-
-            canvas.onclick = (e) => { 
-                score++; 
-                document.getElementById('score').innerText = score;
-            };
-        }
-
-        // --- REASONS ENGINE ---
-        const reasons = [
-            "Because you are my home.", 
-            "The way you believe in me even when I don't.", 
-            "Your 2 AM sleepy voice is my favorite song.", 
-            "You make Kota feel like a paradise.",
-            "You're the only 100% I care about this year.",
-            "The way you handle my stress during mocks."
-        ];
-        function newReason() {
-            const r = reasons[Math.floor(Math.random()*reasons.length)];
-            const textEl = document.getElementById('reason-text');
-            textEl.style.opacity = 0;
-            setTimeout(() => {
-                textEl.innerText = r;
-                textEl.style.opacity = 1;
-            }, 300);
-        }
-
-        // --- INFINITY SCROLL ---
         function initInfinity() {
             const list = document.getElementById('infinityList');
             if(list.children.length > 0) return;
-            const phrases = ["I Love You", "Te Amo", "Je t'aime", "Ich liebe dich", "Ti amo", "Main tumse pyar karta hoon", "Wo ai ni", "Saranghae", "Aishiteru", "Eu te amo"];
-            for(let i=0; i<150; i++) {
+            const phrases = ["I Love You", "Main tumse pyar karta hoon", "Te Amo", "Saranghae", "Aishiteru"];
+            for(let i=0; i<100; i++) {
                 const p = document.createElement('p');
-                p.style.margin = "5px 0";
-                p.style.fontSize = (Math.random() * 0.5 + 1) + "rem";
-                p.style.opacity = Math.random() * 0.5 + 0.5;
                 p.innerText = phrases[i % phrases.length];
                 list.appendChild(p);
             }
         }
 
-        // --- BACKGROUND STARS ---
+        // Rainbow Star Background
         const bg = document.getElementById('bg-canvas');
         const bctx = bg.getContext('2d');
         bg.width = window.innerWidth; bg.height = window.innerHeight;
-        let stars = Array(100).fill().map(() => ({
-            x: Math.random() * bg.width,
-            y: Math.random() * bg.height,
-            r: Math.random() * 2,
-            o: Math.random()
-        }));
-
         function drawBg() {
             bctx.clearRect(0,0,bg.width,bg.height);
-            stars.forEach(s => {
-                bctx.fillStyle = `rgba(210, 4, 45, ${s.o})`;
+            for(let i=0; i<80; i++) {
+                bctx.fillStyle = `hsla(${Math.random() * 360}, 70%, 70%, 0.8)`;
                 bctx.beginPath();
-                bctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+                bctx.arc(Math.random()*bg.width, Math.random()*bg.height, Math.random()*3, 0, Math.PI*2);
                 bctx.fill();
-                s.o += (Math.random() - 0.5) * 0.1;
-                if(s.o < 0) s.o = 0; if(s.o > 1) s.o = 1;
-            });
-            requestAnimationFrame(drawBg);
+            }
         }
-        drawBg();
+        setInterval(drawBg, 100);
     </script>
 </body>
 </html>

@@ -3,224 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3.26.2026 | Our Year</title>
+    <title>3.26.2026 | Our Story</title>
     <style>
         :root {
             --cherry: #D2042D;
-            --dark-cherry: #4a000e;
-            --gold: #ffd700;
+            --deep: #1a0004;
+            --glass: rgba(255, 255, 255, 0.1);
         }
 
         body, html {
-            margin: 0;
-            height: 100%;
-            background: #000;
-            color: white;
-            font-family: 'Inter', sans-serif;
+            margin: 0; padding: 0; height: 100%;
+            background: var(--deep); color: white;
+            font-family: 'Montserrat', sans-serif;
             overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
-        /* Feature 1: The Heartbeat Background */
-        #bg-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            z-index: -1;
-            filter: blur(2px);
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.6; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 0.6; }
-        }
-
-        /* Feature 2: The "Unlock" Stage */
-        #unlock-screen {
-            text-align: center;
-            z-index: 100;
-            transition: 1s ease;
-        }
-
-        .heart-slot {
-            width: 100px; height: 100px;
-            border: 2px dashed var(--cherry);
-            border-radius: 50%;
-            margin: 20px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-        }
-
-        #draggable-heart {
-            cursor: grab;
-            font-size: 3rem;
-            display: inline-block;
-            transition: transform 0.2s;
-        }
-
-        /* Feature 3: The Main Glass Vault */
-        #main-vault {
-            display: none;
-            width: 85vw;
-            height: 80vh;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border-radius: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            box-shadow: 0 0 50px rgba(210, 4, 45, 0.3);
-            text-align: center;
-            overflow-y: auto;
-        }
-
-        /* Feature 4: The Scratch-Off Card */
-        .scratch-container {
-            position: relative;
-            width: 300px;
-            height: 300px;
-            margin: 40px auto;
-            border-radius: 20px;
-            overflow: hidden;
-            cursor: crosshair;
-        }
-
-        .hidden-photo {
-            width: 100%; height: 100%;
-            background: url('YOUR_IMAGE_HERE.jpg') center/cover;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #333; /* Fallback */
-        }
-
-        canvas#scratch {
+        /* The Chapter System */
+        .chapter {
             position: absolute;
-            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            opacity: 0; transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            text-align: center;
+            padding: 20px; box-sizing: border-box;
         }
 
-        h1 { font-size: 3rem; color: var(--cherry); text-shadow: 0 0 10px var(--cherry); }
-        .hidden { opacity: 0; pointer-events: none; }
+        .chapter.active {
+            opacity: 1; transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* UI Elements */
+        h1 { font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: var(--cherry); }
+        .btn-next {
+            position: fixed; bottom: 40px; right: 40px;
+            background: var(--cherry); color: white; border: none;
+            padding: 15px 30px; border-radius: 50px; cursor: pointer;
+            font-weight: bold; box-shadow: 0 0 20px rgba(210, 4, 45, 0.5);
+            z-index: 1000;
+        }
+
+        .glass-card {
+            background: var(--glass); backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 30px; padding: 40px; max-width: 500px;
+        }
+
+        /* Scratch-off Styling */
+        #scratch-canvas { border-radius: 20px; cursor: crosshair; background: #333; }
+
+        /* Progress Bar */
+        .progress-container {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 8px; z-index: 1000;
+        }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.2); }
+        .dot.active { background: var(--cherry); box-shadow: 0 0 10px var(--cherry); }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <canvas id="bg-canvas"></canvas>
+    <div class="progress-container" id="progressBar"></div>
+    <button class="btn-next" onclick="nextChapter()">Next →</button>
 
-    <div id="unlock-screen">
-        <h1>Our First Anniversary</h1>
-        <p>March 26, 2026</p>
-        <div class="heart-slot" ondragover="event.preventDefault()" ondrop="unlock()">
-            <span id="slot-hint">?</span>
+    <div class="chapter active" id="c1">
+        <h1>Welcome to Our Year</h1>
+        <div class="glass-card">
+            <p>I built this world just for us. It has 12 chapters—one for every month we've spent together.</p>
+            <div style="font-size: 3rem; margin-top: 20px; cursor: grab;" id="drag-heart" draggable="true">❤️</div>
+            <p>Drag the heart to "Start" the journey.</p>
         </div>
-        <div id="draggable-heart" draggable="true" ondragstart="event.dataTransfer.setData('text', 'heart')">❤️</div>
-        <p style="opacity: 0.5;">Drag the heart to the circle to start our journey</p>
     </div>
 
-    <div id="main-vault">
-        <h1>Happy 1 Year, My Love</h1>
-        <p>I didn't want to just give you a link. I wanted to give you a secret.</p>
-        
-        <div class="scratch-container">
-            <div class="hidden-photo">
-                <span style="color:white; font-size: 0.8rem;">(Imagine our favorite photo here)</span>
-            </div>
-            <canvas id="scratch" width="300" height="300"></canvas>
+    <div class="chapter" id="c2">
+        <h1>Distance is Just a Number</h1>
+        <div class="glass-card">
+            <p>From Kota to your heart.</p>
+            <div style="font-size: 4rem;">📍 ... 💓</div>
+            <p>No matter how many kilometers, you're always right here.</p>
         </div>
-        <p><b>Scratch the image above</b> to reveal my favorite memory of us.</p>
-        
-        <hr style="border: 0.5px solid rgba(255,255,255,0.1); margin: 40px 0;">
-        
-        <h2>Surprise #2: The Promise</h2>
-        <p>Every day for the last 365 days, I've realized one thing...</p>
-        <div id="typewriter" style="font-size: 1.5rem; color: var(--cherry); height: 50px;"></div>
+    </div>
+
+    <div class="chapter" id="c3">
+        <h1>Our First Memory</h1>
+        <p>Scratch to reveal the day it all changed.</p>
+        <canvas id="scratch-canvas" width="300" height="300"></canvas>
+    </div>
+
+    <div class="chapter" id="c4">
+        <h1>Why You?</h1>
+        <div class="glass-card" id="card-box">
+            <h2 id="reason-text">Because you make me laugh.</h2>
+            <button onclick="changeReason()" style="background: none; color: var(--cherry); border: 1px solid var(--cherry); padding: 5px 15px; border-radius: 20px; cursor: pointer;">Next Reason</button>
+        </div>
+    </div>
+
+    <div class="chapter" id="c5">
+        <h1>The Manifestation</h1>
+        <div class="glass-card">
+            <p>On my journey to JEE, you've been my quiet strength.</p>
+            <p>I manifest a 99.95+ percentile not just for me, but for <b>us</b>.</p>
+        </div>
+    </div>
+
+    <div class="chapter" id="c12">
+        <h1>Happy Anniversary</h1>
+        <p>This is just the beginning of our story.</p>
+        <div style="font-size: 5rem; animation: pulse 1s infinite;">❤️</div>
+        <h2>I Love You</h2>
     </div>
 
     <script>
-        // Background Stars
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        let currentChapter = 1;
+        const totalChapters = 12;
 
-        const stars = Array(200).fill().map(() => ({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            size: Math.random() * 2,
-            speed: Math.random() * 0.5
-        }));
-
-        function drawStars() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#D2042D';
-            stars.forEach(s => {
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-                ctx.fill();
-                s.y -= s.speed;
-                if (s.y < 0) s.y = canvas.height;
-            });
-            requestAnimationFrame(drawStars);
-        }
-        drawStars();
-
-        // Unlock Function
-        function unlock() {
-            document.getElementById('unlock-screen').classList.add('hidden');
-            setTimeout(() => {
-                document.getElementById('unlock-screen').style.display = 'none';
-                document.getElementById('main-vault').style.display = 'block';
-                initScratch();
-                startTypewriter();
-            }, 1000);
+        // Initialize Progress Dots
+        const pb = document.getElementById('progressBar');
+        for(let i=1; i<=totalChapters; i++) {
+            const dot = document.createElement('div');
+            dot.className = `dot ${i===1 ? 'active' : ''}`;
+            dot.id = `dot-${i}`;
+            pb.appendChild(dot);
         }
 
-        // Scratch-off Feature
-        function initScratch() {
-            const sc = document.getElementById('scratch');
-            const sctx = sc.getContext('2d');
-            sctx.fillStyle = '#4a000e';
-            sctx.fillRect(0, 0, 300, 300);
-            sctx.fillStyle = '#fff';
-            sctx.font = '20px Arial';
-            sctx.fillText('SCRATCH ME', 80, 150);
-
-            let isDrawing = false;
-            const erase = (e) => {
-                if (!isDrawing) return;
-                const rect = sc.getBoundingClientRect();
-                const x = (e.clientX || e.touches[0].clientX) - rect.left;
-                const y = (e.clientY || e.touches[0].clientY) - rect.top;
-                sctx.globalCompositeOperation = 'destination-out';
-                sctx.beginPath();
-                sctx.arc(x, y, 25, 0, Math.PI * 2);
-                sctx.fill();
-            };
-
-            sc.addEventListener('mousedown', () => isDrawing = true);
-            sc.addEventListener('mousemove', erase);
-            sc.addEventListener('mouseup', () => isDrawing = false);
-            sc.addEventListener('touchstart', () => isDrawing = true);
-            sc.addEventListener('touchmove', erase);
-        }
-
-        // Typewriter Feature
-        function startTypewriter() {
-            const text = "That you are the best thing that ever happened to me.";
-            let i = 0;
-            const elem = document.getElementById('typewriter');
-            function type() {
-                if (i < text.length) {
-                    elem.innerHTML += text.charAt(i);
-                    i++;
-                    setTimeout(type, 100);
+        function nextChapter() {
+            if(currentChapter < totalChapters) {
+                document.getElementById(`c${currentChapter}`).classList.remove('active');
+                document.getElementById(`dot-${currentChapter}`).classList.remove('active');
+                currentChapter++;
+                
+                // Jump logic if the page doesn't exist yet (for demo)
+                const nextEl = document.getElementById(`c${currentChapter}`);
+                if(nextEl) {
+                    nextEl.classList.add('active');
+                } else {
+                    document.getElementById('c12').classList.add('active'); // Jump to end if middle pages missing
                 }
+                
+                document.getElementById(`dot-${currentChapter}`).classList.add('active');
+                if(currentChapter === 3) initScratch();
             }
-            type();
+        }
+
+        // Scratch Logic
+        function initScratch() {
+            const canvas = document.getElementById('scratch-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#4a000e';
+            ctx.fillRect(0,0,300,300);
+            ctx.globalCompositeOperation = 'destination-out';
+            
+            canvas.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                ctx.beginPath();
+                ctx.arc(e.clientX - rect.left, e.clientY - rect.top, 20, 0, Math.PI*2);
+                ctx.fill();
+            });
+        }
+
+        // Reasons Logic
+        const reasons = [
+            "Your smile brightens my dark days.",
+            "You support my dreams in Kota.",
+            "The way you say my name.",
+            "You are my favorite distraction."
+        ];
+        let rIdx = 0;
+        function changeReason() {
+            rIdx = (rIdx + 1) % reasons.length;
+            document.getElementById('reason-text').innerText = reasons[rIdx];
         }
     </script>
 </body>

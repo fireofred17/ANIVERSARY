@@ -3,209 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>365 Days of Us</title>
+    <title>3.26.2026 | Our Year</title>
     <style>
         :root {
-            --cherry: #79091d;
-            --bright-cherry: #d2042d;
-            --glass: rgba(255, 255, 255, 0.1);
+            --cherry: #D2042D;
+            --dark-cherry: #4a000e;
+            --gold: #ffd700;
         }
 
         body, html {
             margin: 0;
-            padding: 0;
             height: 100%;
-            overflow: hidden; /* No scrolling allowed */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: radial-gradient(circle at center, #2e0209 0%, #000 100%);
+            background: #000;
             color: white;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        /* Moving Heart Background */
-        .bg-animate {
+        /* Feature 1: The Heartbeat Background */
+        #bg-canvas {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
             z-index: -1;
-            background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
-            opacity: 0.3;
+            filter: blur(2px);
+            animation: pulse 1.5s infinite;
         }
 
-        /* Floating Hearts Layer */
-        .heart {
-            position: absolute;
-            color: var(--bright-cherry);
-            font-size: 20px;
-            animation: float 10s infinite linear;
-            opacity: 0;
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 0.6; }
         }
 
-        @keyframes float {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
-        }
-
-        /* Slide Container */
-        .slider {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .slide {
-            position: absolute;
-            width: 80%;
-            max-width: 600px;
-            height: 70vh;
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 30px;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+        /* Feature 2: The "Unlock" Stage */
+        #unlock-screen {
             text-align: center;
-            transform: scale(0.8);
-            opacity: 0;
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: none;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-        }
-
-        .slide.active {
-            transform: scale(1);
-            opacity: 1;
-            pointer-events: auto;
-            z-index: 10;
-        }
-
-        /* Content Styling */
-        h2 { font-size: 3rem; color: var(--bright-cherry); margin-bottom: 10px; text-shadow: 0 0 15px var(--bright-cherry); }
-        p { font-size: 1.2rem; line-height: 1.6; color: #ffccd5; }
-
-        .date-badge {
-            background: var(--bright-cherry);
-            padding: 5px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        /* Navigation */
-        .nav-btns {
-            position: absolute;
-            bottom: 50px;
-            display: flex;
-            gap: 30px;
             z-index: 100;
+            transition: 1s ease;
         }
 
-        .nav-btn {
-            background: none;
-            border: 2px solid var(--bright-cherry);
-            color: white;
-            padding: 10px 25px;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .nav-btn:hover {
-            background: var(--bright-cherry);
-            box-shadow: 0 0 20px var(--bright-cherry);
-        }
-
-        .img-placeholder {
-            width: 100%;
-            height: 250px;
-            border-radius: 20px;
-            background: rgba(255,255,255,0.05);
-            margin-bottom: 20px;
+        .heart-slot {
+            width: 100px; height: 100px;
+            border: 2px dashed var(--cherry);
+            border-radius: 50%;
+            margin: 20px auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 2px dashed var(--bright-cherry);
+            font-size: 2rem;
         }
+
+        #draggable-heart {
+            cursor: grab;
+            font-size: 3rem;
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+
+        /* Feature 3: The Main Glass Vault */
+        #main-vault {
+            display: none;
+            width: 85vw;
+            height: 80vh;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            box-shadow: 0 0 50px rgba(210, 4, 45, 0.3);
+            text-align: center;
+            overflow-y: auto;
+        }
+
+        /* Feature 4: The Scratch-Off Card */
+        .scratch-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 40px auto;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+
+        .hidden-photo {
+            width: 100%; height: 100%;
+            background: url('YOUR_IMAGE_HERE.jpg') center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #333; /* Fallback */
+        }
+
+        canvas#scratch {
+            position: absolute;
+            top: 0; left: 0;
+        }
+
+        h1 { font-size: 3rem; color: var(--cherry); text-shadow: 0 0 10px var(--cherry); }
+        .hidden { opacity: 0; pointer-events: none; }
     </style>
 </head>
 <body>
 
-    <div class="bg-animate" id="heartContainer"></div>
+    <canvas id="bg-canvas"></canvas>
 
-    <div class="slider">
-        <div class="slide active">
-            <div class="date-badge">MARCH 26, 2026</div>
-            <h2>Hey Beautiful</h2>
-            <p>I wanted to do something that wasn't just a card or a gift. I wanted to build a world that only belongs to us.</p>
-            <p style="font-size: 0.9rem; margin-top: 20px; opacity: 0.7;">(Use the buttons below to explore)</p>
+    <div id="unlock-screen">
+        <h1>Our First Anniversary</h1>
+        <p>March 26, 2026</p>
+        <div class="heart-slot" ondragover="event.preventDefault()" ondrop="unlock()">
+            <span id="slot-hint">?</span>
         </div>
+        <div id="draggable-heart" draggable="true" ondragstart="event.dataTransfer.setData('text', 'heart')">❤️</div>
+        <p style="opacity: 0.5;">Drag the heart to the circle to start our journey</p>
+    </div>
 
-        <div class="slide">
-            <div class="img-placeholder">IMAGE OF OUR FIRST DATE</div>
-            <h2>365 Days Ago...</h2>
-            <p>Our journey started exactly a year ago today. From that first message to this very moment, every second was worth it.</p>
+    <div id="main-vault">
+        <h1>Happy 1 Year, My Love</h1>
+        <p>I didn't want to just give you a link. I wanted to give you a secret.</p>
+        
+        <div class="scratch-container">
+            <div class="hidden-photo">
+                <span style="color:white; font-size: 0.8rem;">(Imagine our favorite photo here)</span>
+            </div>
+            <canvas id="scratch" width="300" height="300"></canvas>
         </div>
-
-        <div class="slide">
-            <div class="img-placeholder">FAVORITE PHOTO TOGETHER</div>
-            <h2>My Favorite View</h2>
-            <p>People say the world is big, but my whole world is right here in this picture. You are my greatest achievement.</p>
-        </div>
-
-        <div class="slide">
-            <h2>Happy 1st Anniversary</h2>
-            <p>This is just Volume One of a very long book. I love you more than code can express.</p>
-            <div style="margin-top: 30px; font-size: 2rem;">❤️</div>
-        </div>
-
-        <div class="nav-btns">
-            <button class="nav-btn" onclick="prevSlide()">Back</button>
-            <button class="nav-btn" onclick="nextSlide()">Next</button>
-        </div>
+        <p><b>Scratch the image above</b> to reveal my favorite memory of us.</p>
+        
+        <hr style="border: 0.5px solid rgba(255,255,255,0.1); margin: 40px 0;">
+        
+        <h2>Surprise #2: The Promise</h2>
+        <p>Every day for the last 365 days, I've realized one thing...</p>
+        <div id="typewriter" style="font-size: 1.5rem; color: var(--cherry); height: 50px;"></div>
     </div>
 
     <script>
-        // Heart Animation Generator
-        const heartContainer = document.getElementById('heartContainer');
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.classList.add('heart');
-            heart.innerHTML = '❤️';
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
-            heartContainer.appendChild(heart);
-            setTimeout(() => heart.remove(), 10000);
-        }
-        setInterval(createHeart, 500);
+        // Background Stars
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-        // Slider Logic
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide');
+        const stars = Array(200).fill().map(() => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 2,
+            speed: Math.random() * 0.5
+        }));
 
-        function showSlide(index) {
-            slides.forEach((slide, i) => {
-                slide.classList.remove('active');
-                if (i === index) slide.classList.add('active');
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#D2042D';
+            stars.forEach(s => {
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                ctx.fill();
+                s.y -= s.speed;
+                if (s.y < 0) s.y = canvas.height;
             });
+            requestAnimationFrame(drawStars);
+        }
+        drawStars();
+
+        // Unlock Function
+        function unlock() {
+            document.getElementById('unlock-screen').classList.add('hidden');
+            setTimeout(() => {
+                document.getElementById('unlock-screen').style.display = 'none';
+                document.getElementById('main-vault').style.display = 'block';
+                initScratch();
+                startTypewriter();
+            }, 1000);
         }
 
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % slides.length;
-            showSlide(currentSlide);
+        // Scratch-off Feature
+        function initScratch() {
+            const sc = document.getElementById('scratch');
+            const sctx = sc.getContext('2d');
+            sctx.fillStyle = '#4a000e';
+            sctx.fillRect(0, 0, 300, 300);
+            sctx.fillStyle = '#fff';
+            sctx.font = '20px Arial';
+            sctx.fillText('SCRATCH ME', 80, 150);
+
+            let isDrawing = false;
+            const erase = (e) => {
+                if (!isDrawing) return;
+                const rect = sc.getBoundingClientRect();
+                const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+                sctx.globalCompositeOperation = 'destination-out';
+                sctx.beginPath();
+                sctx.arc(x, y, 25, 0, Math.PI * 2);
+                sctx.fill();
+            };
+
+            sc.addEventListener('mousedown', () => isDrawing = true);
+            sc.addEventListener('mousemove', erase);
+            sc.addEventListener('mouseup', () => isDrawing = false);
+            sc.addEventListener('touchstart', () => isDrawing = true);
+            sc.addEventListener('touchmove', erase);
         }
 
-        function prevSlide() {
-            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-            showSlide(currentSlide);
+        // Typewriter Feature
+        function startTypewriter() {
+            const text = "That you are the best thing that ever happened to me.";
+            let i = 0;
+            const elem = document.getElementById('typewriter');
+            function type() {
+                if (i < text.length) {
+                    elem.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, 100);
+                }
+            }
+            type();
         }
     </script>
 </body>

@@ -59,7 +59,16 @@
         
         /* Interactive Elements */
         #game-canvas { background: rgba(0,0,0,0.4); border: 2px solid var(--rose); border-radius: 20px; touch-action: none; margin: 10px 0; }
-        #scratch-pad { background: #333; border-radius: 15px; touch-action: none; cursor: crosshair; }
+        
+        /* Photo Scratch Container */
+        .scratch-container {
+            position: relative; width: 300px; height: 300px; 
+            margin: 10px auto; border-radius: 15px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        #scratch-pad { position: absolute; top: 0; left: 0; z-index: 2; touch-action: none; cursor: crosshair; }
+        .revealed-photo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+
         #infinity-box {
             height: 250px; overflow-y: auto; width: 100%;
             background: rgba(0,0,0,0.4); border-radius: 20px;
@@ -93,8 +102,11 @@
 
     <div class="chapter" id="c3">
         <h1>Reveal the Magic</h1>
-        <p>Scratch the surface to see our special date.</p>
-        <canvas id="scratch-pad" width="300" height="300"></canvas>
+        <p>Scratch to reveal a memory!</p>
+        <div class="scratch-container">
+            <img src="INSERT_IMAGE_URL_HERE" class="revealed-photo" alt="Our Memory">
+            <canvas id="scratch-pad" width="300" height="300"></canvas>
+        </div>
     </div>
 
     <div class="chapter" id="c4">
@@ -133,7 +145,6 @@
         let step = 1;
         const totalSteps = 7;
 
-        // Create Navigation Dots
         const dotContainer = document.getElementById('dots');
         for(let i=1; i<=totalSteps; i++) {
             const d = document.createElement('div');
@@ -149,21 +160,15 @@
 
         function nextChapter() {
             if(step < totalSteps) {
-                // Hide current chapter
                 document.getElementById('c' + step).classList.remove('active');
                 dotContainer.children[step-1].classList.remove('active');
-                
                 step++;
-                
-                // Show next chapter
                 document.getElementById('c' + step).classList.add('active');
                 dotContainer.children[step-1].classList.add('active');
 
-                // Rainbow backgrounds
                 const colors = ['#4a0010', '#1a002e', '#001a1a', '#2d2d00', '#000c1a', '#4a0010'];
                 document.body.style.background = `radial-gradient(circle, ${colors[step % colors.length]} 0%, #000 100%)`;
 
-                // Logic triggers
                 if(step === 3) initScratch();
                 if(step === 4) initGame();
                 if(step === 5) initClock();
@@ -191,12 +196,23 @@
         }
         animatePetals();
 
-        // --- SCRATCH CARD ---
+        // --- PHOTO SCRATCH LOGIC ---
         function initScratch() {
             const canvas = document.getElementById('scratch-pad');
             const ctx = canvas.getContext('2d');
-            ctx.fillStyle = "#888"; ctx.fillRect(0,0,300,300);
+            // Gray cover layer
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = "#888"; 
+            ctx.fillRect(0,0,300,300);
+            
+            // Text to encourage scratching
+            ctx.fillStyle = "#FFF";
+            ctx.font = "20px Montserrat";
+            ctx.textAlign = "center";
+            ctx.fillText("Scratch Here 💖", 150, 150);
+
             ctx.globalCompositeOperation = 'destination-out';
+            
             const scratch = (e) => {
                 const rect = canvas.getBoundingClientRect();
                 const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
@@ -204,7 +220,8 @@
                 ctx.beginPath(); ctx.arc(x, y, 35, 0, Math.PI*2); ctx.fill();
             };
             canvas.addEventListener('touchmove', (e) => { e.preventDefault(); scratch(e); }, {passive:false});
-            canvas.onmousemove = scratch;
+            canvas.onmousemove = (e) => { if(e.buttons === 1) scratch(e); };
+            canvas.onmousedown = scratch;
         }
 
         // --- GAME (HEART CATCHER) ---
